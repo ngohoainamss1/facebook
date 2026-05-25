@@ -7,9 +7,9 @@ let clickCounter = {};
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-app.get('/share/:shopeeId', (req, res) => {
+app.get('/nguyen.hien', (req, res) => {
     const shopeeId = req.params.shopeeId;
-    const targetUrl = `https://s.shopee.vn/${shopeeId}`;
+    const targetUrl = `https://s.shopee.vn/70HFh4p4Yk`;
     
     // 1. CHỐNG CACHE CHO ĐIỆN THOẠI (Bắt buộc phải ping về server mỗi khi click)
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
