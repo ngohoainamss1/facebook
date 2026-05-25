@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.set('trust proxy', 1); // Thêm dòng này để Render nhận chuẩn HTTPS
 
 // Cấu hình để phục vụ file ảnh tĩnh từ thư mục 'public'
 app.use('/public', express.static(path.join(__dirname, 'public')));
