@@ -3,30 +3,43 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// KHỞI TẠO BỘ ĐẾM: Lưu trữ lượt click vào RAM dưới dạng { shopeeId: số_lượt_click }
 let clickCounter = {};
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-// Tuyến đường xử lý link chuyển hướng gốc
 app.get('/click/:shopeeId', (req, res) => {
     const shopeeId = req.params.shopeeId;
     const targetUrl = `https://s.shopee.vn/${shopeeId}`;
     
-    // TỰ ĐỘNG ĐẾM SỐ LƯỢT TRUY CẬP
-    if (!clickCounter[shopeeId]) {
-        clickCounter[shopeeId] = 0; // Nếu ID này mới tinh thì đặt bằng 0
-    }
-    clickCounter[shopeeId] += 1; // Cộng thêm 1 lượt click
+    // 1. CHỐNG CACHE CHO ĐIỆN THOẠI (Bắt buộc phải ping về server mỗi khi click)
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
 
-    // In trực tiếp ra Terminal/Log của Render để bạn tiện theo dõi realtime
-    console.log(`[LOG] Sản phẩm ${shopeeId} vừa có thêm 1 click. Tổng: ${clickCounter[shopeeId]}`);
+    // 2. PHÂN LOẠI BOT VÀ NGƯỜI THẬT
+    const userAgent = req.headers['user-agent'] || '';
+    const isBot = userAgent.toLowerCase().includes('bot') || 
+                  userAgent.toLowerCase().includes('facebookexternalhit') ||
+                  userAgent.toLowerCase().includes('crawler');
+
+    // 3. CHỈ ĐẾM LƯỢT CLICK CỦA NGƯỜI THẬT
+    if (!isBot) {
+        if (!clickCounter[shopeeId]) {
+            clickCounter[shopeeId] = 0;
+        }
+        clickCounter[shopeeId] += 1;
+        // In log ra để bạn dễ theo dõi trên Render
+        console.log(`[USER CLICK] Khách vừa click vào mã ${shopeeId} | Tổng: ${clickCounter[shopeeId]}`);
+    } else {
+        console.log(`[BOT QUÉT] Bot Facebook đang quét link ${shopeeId} (Không đếm)`);
+    }
     
     const host = req.get('host');
     const protocol = req.protocol;
     const fakeImageUrl = `${protocol}://${host}/public/bi-an.jpg`;
 
-    // TRẢ VỀ META CHO BOT ĐỌC VÀ LẬP TỨC ĐIỀU HƯỚNG BẰNG CẢ HTML LẪN JAVASCRIPT
+    // TRẢ VỀ GIAO DIỆN CHUYỂN HƯỚNG
     res.send(`
     <!DOCTYPE html>
     <html lang="vi">
@@ -53,17 +66,17 @@ app.get('/click/:shopeeId', (req, res) => {
     `);
 });
 
-// TUYẾN ĐƯỜNG XEM THỐNG KÊ (Chỉ có bạn biết)
+// Route thống kê (cũng gắn chống cache để lúc bạn F5 xem số nó cập nhật ngay)
 app.get('/kvil-stats', (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
     res.json({
         status: "success",
-        description: "Bảng thống kê lượt click chuyển hướng Shopee",
+        description: "Bảng thống kê click NGƯỜI THẬT (Đã lọc Bot)",
         total_tracked: Object.keys(clickCounter).length,
         analytics: clickCounter
     });
 });
 
-// Route trang chủ chống lỗi trống trang
 app.get('/', (req, res) => {
     res.send('KVIL Redirect Server Online!');
 });
