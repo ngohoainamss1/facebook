@@ -1,0 +1,12 @@
+{
+  "name": "kvilaa",
+  "version": "1.0.0",
+  "description": "KVIL Facebook Redirect Link",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
