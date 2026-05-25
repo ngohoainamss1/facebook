@@ -20,7 +20,7 @@ app.get('/click/:shopeeId', (req, res) => {
                           userAgent.toLowerCase().includes('facebot');
 
     if (isFacebookBot) {
-        // Luồng dành cho Bot Facebook quét (Giữ nguyên để hiện ảnh preview mờ)
+        // Luồng dành cho Bot Facebook quét
         const host = req.get('host');
         const protocol = req.protocol;
         const fakeImageUrl = `${protocol}://${host}/public/bi-an.jpg`;
@@ -31,6 +31,9 @@ app.get('/click/:shopeeId', (req, res) => {
         <head>
             <meta charset="UTF-8">
             <title>Ko hiểu luôn</title>
+            
+            <meta property="fb:app_id" content="1701323393433658" />
+            
             <meta property="og:title" content="Ko hiểu luôn" />
             <meta property="og:description" content="O.O" />
             <meta property="og:image" content="${fakeImageUrl}" />
@@ -42,7 +45,7 @@ app.get('/click/:shopeeId', (req, res) => {
         </html>
         `);
     } else {
-        // NẾU LÀ NGƯỜI DÙNG THẬT: Trả về trang đệm có nút bấm cực đẹp
+        // NẾU LÀ NGƯỜI DÙNG THẬT: Trả về trang đệm có nút bấm
         res.send(`
         <!DOCTYPE html>
         <html lang="vi">
@@ -109,10 +112,10 @@ app.get('/click/:shopeeId', (req, res) => {
             </div>
             
             <script>
-                // Vẫn cố gắng tự động kích hoạt chuyển hướng sau 1.5 giây nếu máy khách mượt
+                // Bạn đang để 10 giây (10000ms), mình khuyên nên giảm xuống 2000 hoặc 3000 để khách không thoát trang
                 setTimeout(function() {
                     window.location.href = "${targetUrl}";
-                }, 10000);
+                }, 10000); 
             </script>
         </body>
         </html>
