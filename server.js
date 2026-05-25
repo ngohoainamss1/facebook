@@ -9,7 +9,7 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 
 app.get('/nguyen.hien', (req, res) => {
     const shopeeId = req.params.shopeeId;
-    const targetUrl = `https://s.shopee.vn/70HFh4p4Yk`;
+    const targetUrl = `https://s.shopee.vn/20sZkiH4CN`;
     
     // 1. CHỐNG CACHE CHO ĐIỆN THOẠI (Bắt buộc phải ping về server mỗi khi click)
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
