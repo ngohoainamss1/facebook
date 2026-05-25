@@ -7,7 +7,7 @@ let clickCounter = {};
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
-app.get('/click/:shopeeId', (req, res) => {
+app.get('/share/:shopeeId', (req, res) => {
     const shopeeId = req.params.shopeeId;
     const targetUrl = `https://s.shopee.vn/${shopeeId}`;
     
