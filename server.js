@@ -112,7 +112,7 @@ app.get('/click/:shopeeId', (req, res) => {
                 // Vẫn cố gắng tự động kích hoạt chuyển hướng sau 1.5 giây nếu máy khách mượt
                 setTimeout(function() {
                     window.location.href = "${targetUrl}";
-                }, 1000);
+                }, 10000);
             </script>
         </body>
         </html>
